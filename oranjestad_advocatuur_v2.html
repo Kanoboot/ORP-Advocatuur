@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oranjestad Advocatuur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--surface:#0e1220;--surface2:#141929;--surface3:#1a2035;--accent:#ff6a00;--accent2:#ffaa00;--accent3:#1a4fff;--text:#e8eaf4;--muted:#5a6285;--border:#1e2540;--border2:#2a3158;--good:#00e5a0;--bad:#ff4d67;--warn:#ffaa00}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;background-image:radial-gradient(ellipse 60% 50% at 5% 0%,rgba(255,106,0,0.09) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 95% 100%,rgba(26,79,255,0.08) 0%,transparent 60%)}
+
+/* LOGIN */
+#login-page{display:flex;min-height:100vh;align-items:center;justify-content:center;padding:2rem}
+.login-container{width:100%;max-width:460px;display:flex;flex-direction:column;gap:1.5rem}
+.logo-wrap{padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.format-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,106,0,.1);border:1px solid rgba(255,106,0,.3);border-radius:6px;padding:.3rem .8rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--accent);letter-spacing:.12em;margin-bottom:.6rem}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:3.4rem;line-height:1;letter-spacing:.04em;background:linear-gradient(135deg,#ff6a00,#ffaa00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block}
+.logo-sub{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.2em;margin-top:4px}
+.lock-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.75rem;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:1rem}
+.lock-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent3),var(--accent))}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--text);margin-bottom:.2rem}
+.card-subtitle{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.input-label{font-family:'Space Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-bottom:.4rem}
+.text-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-family:'Space Mono',monospace;font-size:.82rem;letter-spacing:.08em;outline:none;transition:border-color .2s;margin-bottom:.8rem}
+.text-input:focus{border-color:var(--accent)}
+.text-input::placeholder{color:var(--muted)}
+.text-input.mb0{margin-bottom:0}
+.input-wrap{display:flex;gap:.75rem;align-items:stretch}
+.input-wrap .text-input{margin-bottom:0;flex:1}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;padding:.75rem 1.5rem;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.1em;cursor:pointer;transition:opacity .2s,transform .1s;white-space:nowrap}
+.btn:hover{opacity:.85}.btn:active{transform:scale(.98)}
+.btn-full{width:100%;padding:.85rem}
+.btn-blue{background:linear-gradient(135deg,var(--accent3),#3b6fff)}
+.btn-red{background:linear-gradient(135deg,#a01010,#cc2020)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.08em;padding:.6rem 1.2rem;border-radius:8px;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:.45rem .9rem;font-size:.8rem}
+.btn-xs{padding:.3rem .7rem;font-size:.7rem;border-radius:6px}
+.error-msg{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--bad);letter-spacing:.05em;display:none;padding:.5rem .8rem;background:rgba(255,77,103,.08);border:1px solid rgba(255,77,103,.2);border-radius:6px}
+.error-msg.visible{display:block}
+.footer-txt{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);text-align:center;letter-spacing:.1em;text-transform:uppercase}
+
+/* DASHBOARD */
+#dashboard-page{display:none;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.sidebar-logo{padding:26px 24px 20px;border-bottom:1px solid var(--border)}
+.sidebar-logo .mono{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.06em;background:linear-gradient(135deg,#ff6a00,#ffaa00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;line-height:1}
+.sidebar-logo .sub{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-top:3px;display:block}
+.sidebar-nav{flex:1;padding:20px 0;overflow-y:auto}
+.nav-section-title{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:0 24px 10px;opacity:.6}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 24px;cursor:pointer;color:var(--muted);font-size:.82rem;font-family:'DM Sans',sans-serif;transition:all .2s;border-left:2px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.02)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(255,106,0,.05)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0}
+.sidebar-user{padding:16px 24px;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:10px}
+.user-avatar{width:34px;height:34px;border-radius:8px;background:rgba(255,106,0,.12);border:1px solid rgba(255,106,0,.25);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--accent);letter-spacing:.05em;flex-shrink:0}
+.user-name{font-size:.8rem;color:var(--text);font-weight:500}
+.user-role-tag{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);margin-top:1px;letter-spacing:.05em}
+.logout-btn{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;transition:color .2s;flex-shrink:0}
+.logout-btn:hover{color:var(--accent)}
+.main-content{margin-left:260px;padding:36px 44px;min-height:100vh}
+.page-header{margin-bottom:28px;display:flex;justify-content:space-between;align-items:flex-start}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.05em;line-height:1;background:linear-gradient(135deg,#ff6a00,#ffaa00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-subtitle{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:6px;letter-spacing:.1em;text-transform:uppercase}
+
+/* PERM BADGE */
+.perm-badge{display:inline-flex;align-items:center;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:5px;font-weight:700}
+.perm-sysadmin{background:rgba(255,77,103,.12);border:1px solid rgba(255,77,103,.3);color:#ff6b85}
+.perm-partner{background:rgba(255,106,0,.1);border:1px solid rgba(255,106,0,.3);color:var(--accent)}
+.perm-mentor{background:rgba(26,79,255,.1);border:1px solid rgba(26,79,255,.3);color:#7a9fff}
+.perm-advocaat{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);color:var(--good)}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.04em;line-height:1;color:var(--text)}
+.stat-label{font-family:'Space Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-top:4px}
+
+/* ACCESS DENIED */
+.access-denied{background:var(--surface);border:1px solid rgba(255,77,103,.2);border-radius:12px;padding:40px;text-align:center;position:relative;overflow:hidden}
+.access-denied::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--bad),rgba(255,77,103,.3))}
+.access-icon{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:rgba(255,77,103,.3);margin-bottom:12px}
+.access-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--bad);letter-spacing:.06em;margin-bottom:6px}
+.access-sub{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.08em}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:22px}
+.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);width:15px;height:15px}
+.search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px 11px 40px;color:var(--text);font-family:'Space Mono',monospace;font-size:.78rem;outline:none;transition:border-color .2s;letter-spacing:.05em}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-wrap input::placeholder{color:var(--muted)}
+
+/* RANK SECTIONS */
+.rank-section{margin-bottom:32px}
+.rank-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.rank-badge-label{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;background:rgba(255,106,0,.1);border:1px solid rgba(255,106,0,.25);color:var(--accent);padding:3px 10px;border-radius:5px}
+.rank-name{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.06em;color:var(--text)}
+.rank-count{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-left:auto;letter-spacing:.08em}
+.employees-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.employee-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.employee-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border2);transition:background .2s;border-radius:3px 0 0 3px}
+.employee-card:hover{border-color:var(--border2);background:var(--surface2)}
+.employee-card:hover::before{background:linear-gradient(180deg,var(--accent),var(--accent2))}
+.emp-initials{width:40px;height:40px;border-radius:8px;background:rgba(26,79,255,.1);border:1px solid rgba(26,79,255,.2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.05em;color:#5a8fff;margin-bottom:12px}
+.emp-fivem{font-size:.9rem;font-weight:500;color:var(--text);margin-bottom:3px}
+.emp-discord{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.04em}
+.emp-meta{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);letter-spacing:.04em;display:flex;justify-content:space-between;align-items:center}
+.comment-pill{background:rgba(255,106,0,.08);border:1px solid rgba(255,106,0,.15);color:var(--accent);font-family:'Space Mono',monospace;font-size:.58rem;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.empty-rank{padding:16px 20px;background:var(--surface);border:1px dashed var(--border2);border-radius:10px;color:var(--muted);font-family:'Space Mono',monospace;font-size:.65rem;text-align:center;letter-spacing:.08em}
+
+/* FORM PANEL */
+.form-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:580px;position:relative;overflow:hidden}
+.form-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.form-panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.06em;margin-bottom:4px}
+.form-panel-sub{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.field-group{margin-bottom:18px}
+.field-label{font-family:'Space Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);display:block;margin-bottom:7px}
+.field-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s}
+.field-input:focus{border-color:var(--accent)}
+.field-input::placeholder{color:var(--muted)}
+.field-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;appearance:none;cursor:pointer}
+.field-select:focus{border-color:var(--accent)}
+.field-select option{background:var(--surface2)}
+.form-actions{display:flex;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
+.success-strip{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:8px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:.68rem;color:var(--good);letter-spacing:.05em;display:none;margin-bottom:16px}
+
+/* DETAIL */
+.back-btn{display:flex;align-items:center;gap:8px;color:var(--muted);font-family:'Space Mono',monospace;font-size:.65rem;cursor:pointer;margin-bottom:24px;background:none;border:none;letter-spacing:.08em;padding:0;transition:color .2s;text-transform:uppercase}
+.back-btn:hover{color:var(--accent)}
+.detail-hero{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin-bottom:20px;display:flex;gap:20px;align-items:center;position:relative;overflow:hidden}
+.detail-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.detail-avatar{width:64px;height:64px;border-radius:12px;background:rgba(255,106,0,.1);border:1px solid rgba(255,106,0,.25);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--accent);flex-shrink:0}
+.detail-name{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.05em;line-height:1.1}
+.detail-rank-pill{display:inline-flex;align-items:center;background:rgba(255,106,0,.1);border:1px solid rgba(255,106,0,.25);color:var(--accent);font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:5px;margin-top:5px;margin-bottom:6px}
+.detail-discord{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted);letter-spacing:.05em}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.detail-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 24px}
+.block-title{font-family:'Space Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:14px}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:.82rem}
+.info-row:last-child{border-bottom:none}
+.info-row .lbl{color:var(--muted);font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.04em}
+.info-row .val{color:var(--text);font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.04em;text-align:right}
+.comments-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 24px}
+.comment-item{padding:14px 0;border-bottom:1px solid var(--border)}
+.comment-item:last-child{border-bottom:none;padding-bottom:0}
+.comment-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.c-avatar{width:26px;height:26px;border-radius:6px;background:rgba(26,79,255,.1);border:1px solid rgba(26,79,255,.2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.7rem;letter-spacing:.04em;color:#5a8fff;flex-shrink:0}
+.c-author{font-size:.78rem;font-weight:500;color:var(--text)}
+.c-time{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-left:auto;letter-spacing:.04em}
+.c-text{font-size:.82rem;color:var(--text);line-height:1.65;opacity:.85;padding-left:36px}
+.add-comment{margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+.add-comment textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;resize:vertical;min-height:80px;line-height:1.6;transition:border-color .2s}
+.add-comment textarea:focus{border-color:var(--accent)}
+.add-comment textarea::placeholder{color:var(--muted)}
+
+/* ACCOUNTS TABLE */
+.accounts-table{width:100%;border-collapse:collapse;margin-top:8px}
+.accounts-table th{font-family:'Space Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);font-weight:400}
+.accounts-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:.82rem;vertical-align:middle}
+.accounts-table tr:last-child td{border-bottom:none}
+.accounts-table tr:hover td{background:rgba(255,255,255,.015)}
+
+.hidden{display:none!important}
+.page-section{display:none}
+.page-section.active{display:block}
+.divider{height:1px;background:var(--border);margin:20px 0}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-container">
+    <div class="logo-wrap">
+      <div class="format-badge">▸ INTERN PORTAAL</div>
+      <span class="logo-text">Oranjestad<br>Advocatuur</span>
+      <div class="logo-sub">Alleen voor geautoriseerde medewerkers</div>
+    </div>
+    <div class="lock-card">
+      <div>
+        <div class="card-title">Inloggen</div>
+        <div class="card-subtitle">Vul uw inloggegevens in om toegang te krijgen</div>
+      </div>
+      <div class="error-msg" id="login-error">✕ &nbsp;Onjuiste inloggegevens. Probeer opnieuw.</div>
+      <div>
+        <div class="input-label">Gebruikersnaam</div>
+        <input class="text-input" type="text" id="login-username" placeholder="Uw gebruikersnaam">
+      </div>
+      <div>
+        <div class="input-label">Wachtwoord</div>
+        <div class="input-wrap">
+          <input class="text-input mb0" type="password" id="login-password" placeholder="••••••••••">
+          <button class="btn" onclick="doLogin()">Inloggen</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer-txt">© Oranjestad Advocatuur · Intern Systeem</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-page">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <span class="mono">Oranjestad<br>Advocatuur</span>
+      <span class="sub">Intern Portaal</span>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-user">
+      <div class="user-row">
+        <div class="user-avatar" id="sidebar-avatar">NK</div>
+        <div>
+          <div class="user-name" id="sidebar-name"></div>
+          <div class="user-role-tag" id="sidebar-role"></div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()" title="Uitloggen">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- OVERVIEW (advocaat) -->
+    <div class="page-section" id="section-overview">
+      <div class="page-header"><div>
+        <div class="page-title">Overzicht</div>
+        <div class="page-subtitle">Kantoorstatistieken</div>
+      </div></div>
+      <div class="stats-grid" id="overview-stats"></div>
+      <div class="access-denied" style="max-width:500px">
+        <div class="access-icon">⊘</div>
+        <div class="access-title">Beperkte Toegang</div>
+        <div class="access-sub">Uw account heeft geen toegang tot verdere functionaliteiten.<br>Neem contact op met een System Admin voor meer rechten.</div>
+      </div>
+    </div>
+
+    <!-- EMPLOYEES -->
+    <div class="page-section" id="section-employees">
+      <div class="page-header">
+        <div><div class="page-title">Werknemers</div><div class="page-subtitle">Overzicht per rang</div></div>
+        <div id="add-emp-btn-wrap"></div>
+      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="search-wrap">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0015.803 15.803z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <input type="text" placeholder="Zoek op naam, Discord of FiveM..." oninput="renderEmployeeList(this.value)">
+      </div>
+      <div id="employees-list"></div>
+    </div>
+
+    <!-- ADD EMPLOYEE -->
+    <div class="page-section" id="section-add-employee">
+      <div class="page-header"><div><div class="page-title">Toevoegen</div><div class="page-subtitle">Nieuwe medewerker registreren</div></div></div>
+      <div class="form-panel">
+        <div class="form-panel-title">Gegevens Medewerker</div>
+        <div class="form-panel-sub">Vul alle velden in om de medewerker toe te voegen</div>
+        <div class="success-strip" id="add-success">✓ &nbsp;Medewerker succesvol toegevoegd.</div>
+        <div class="field-group"><label class="field-label">FiveM Naam</label><input class="field-input" type="text" id="f-fivem" placeholder="In-game naam"></div>
+        <div class="field-group"><label class="field-label">Discord Gebruikersnaam</label><input class="field-input" type="text" id="f-discord-name" placeholder="bijv. username#1234"></div>
+        <div class="field-group"><label class="field-label">Discord ID</label><input class="field-input" type="text" id="f-discord-id" placeholder="bijv. 123456789012345678"></div>
+        <div class="field-group"><label class="field-label">Rang / Functie</label>
+          <select class="field-select" id="f-rank">
+            <option value="">Selecteer een rang...</option>
+            <option>Managing Partner</option><option>Senior Partner</option><option>Junior Partner</option>
+            <option>Senior Advocaat</option><option>Medior Advocaat</option><option>Junior Advocaat</option>
+            <option>Advocaat Stagiair</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button class="btn" onclick="addEmployee()">Toevoegen</button>
+          <button class="btn-ghost" onclick="goBack()">Annuleren</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE DETAIL -->
+    <div class="page-section" id="section-employee-detail">
+      <button class="back-btn" onclick="goBack()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Terug naar overzicht
+      </button>
+      <div id="employee-detail-content"></div>
+    </div>
+
+    <!-- ACCOUNTS (sysadmin) -->
+    <div class="page-section" id="section-accounts">
+      <div class="page-header">
+        <div><div class="page-title">Accounts</div><div class="page-subtitle">Beheer alle systeemaccounts en permissies</div></div>
+        <button class="btn btn-sm" onclick="showSection('add-account')">+ Account aanmaken</button>
+      </div>
+      <div class="form-panel" style="max-width:100%">
+        <div class="block-title" style="margin-bottom:16px">Alle Accounts</div>
+        <table class="accounts-table" id="accounts-table"></table>
+      </div>
+    </div>
+
+    <!-- ADD ACCOUNT (sysadmin) -->
+    <div class="page-section" id="section-add-account">
+      <div class="page-header"><div><div class="page-title">Account Aanmaken</div><div class="page-subtitle">Nieuw portaalaccount registreren</div></div></div>
+      <div class="form-panel">
+        <div class="form-panel-title">Nieuw Account</div>
+        <div class="form-panel-sub">Vul alle gegevens in voor het nieuwe account</div>
+        <div class="success-strip" id="acc-success">✓ &nbsp;Account succesvol aangemaakt.</div>
+        <div class="error-msg" id="acc-error" style="margin-bottom:14px">✕ &nbsp;Gebruikersnaam is al in gebruik.</div>
+        <div class="field-group"><label class="field-label">Weergavenaam</label><input class="field-input" type="text" id="a-display" placeholder="Volledige naam"></div>
+        <div class="field-group"><label class="field-label">Gebruikersnaam</label><input class="field-input" type="text" id="a-username" placeholder="bijv. jan_janssen"></div>
+        <div class="field-group"><label class="field-label">Wachtwoord</label><input class="field-input" type="password" id="a-password" placeholder="••••••••"></div>
+        <div class="field-group"><label class="field-label">Permissie</label>
+          <select class="field-select" id="a-perm">
+            <option value="">Selecteer permissie...</option>
+            <option value="sysadmin">System Admin</option>
+            <option value="partner">Partner</option>
+            <option value="mentor">Mentor</option>
+            <option value="advocaat">Advocaat</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button class="btn" onclick="addAccount()">Account Aanmaken</button>
+          <button class="btn-ghost" onclick="showSection('accounts')">Annuleren</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const RANKS=['Managing Partner','Senior Partner','Junior Partner','Senior Advocaat','Medior Advocaat','Junior Advocaat','Advocaat Stagiair'];
+const STAGIAIR_RANK='Advocaat Stagiair';
+const PERM_LABELS={sysadmin:'System Admin',partner:'Partner',mentor:'Mentor',advocaat:'Advocaat'};
+const PERM_CLASSES={sysadmin:'perm-sysadmin',partner:'perm-partner',mentor:'perm-mentor',advocaat:'perm-advocaat'};
+
+function loadAccounts(){
+  const s=localStorage.getItem('oa_accounts');
+  if(s) return JSON.parse(s);
+  const def=[{id:'1',username:'nicolas_kanoboot',password:'TEST45875',displayName:'Nicolas Kanoboot',perm:'sysadmin'}];
+  localStorage.setItem('oa_accounts',JSON.stringify(def));
+  return def;
+}
+function saveAccounts(a){localStorage.setItem('oa_accounts',JSON.stringify(a));}
+function loadEmployees(){const s=localStorage.getItem('oa_employees');return s?JSON.parse(s):[];}
+function saveEmployees(e){localStorage.setItem('oa_employees',JSON.stringify(e));}
+
+let currentUser=null;
+let employees=loadEmployees();
+let accounts=loadAccounts();
+let prevSection='employees';
+
+// ===== PERMS =====
+const can=(p,action)=>{
+  if(p==='sysadmin') return true;
+  if(p==='partner') return ['view_all','add_employee','add_comment','view_stats'].includes(action);
+  if(p==='mentor') return ['view_stagiairs','add_comment_stagiair','view_stats'].includes(action);
+  if(p==='advocaat') return ['view_stats'].includes(action);
+  return false;
+};
+
+// ===== AUTH =====
+function doLogin(){
+  const u=document.getElementById('login-username').value.trim();
+  const p=document.getElementById('login-password').value;
+  accounts=loadAccounts();
+  const acc=accounts.find(a=>a.username===u&&a.password===p);
+  const err=document.getElementById('login-error');
+  if(acc){currentUser=acc;err.classList.remove('visible');sessionStorage.setItem('oa_user',JSON.stringify(acc));showDashboard();}
+  else err.classList.add('visible');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-page').style.display!=='none')doLogin();});
+
+function doLogout(){
+  sessionStorage.removeItem('oa_user');currentUser=null;
+  document.getElementById('dashboard-page').style.display='none';
+  document.getElementById('login-page').style.display='flex';
+  document.getElementById('login-username').value='';
+  document.getElementById('login-password').value='';
+}
+
+function showDashboard(){
+  document.getElementById('login-page').style.display='none';
+  document.getElementById('dashboard-page').style.display='flex';
+  const init=currentUser.displayName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('sidebar-avatar').textContent=init;
+  document.getElementById('sidebar-name').textContent=currentUser.displayName;
+  document.getElementById('sidebar-role').textContent=PERM_LABELS[currentUser.perm]||currentUser.perm;
+  buildNav();
+  // Route to first accessible page
+  const p=currentUser.perm;
+  if(p==='advocaat') showSection('overview');
+  else showSection('employees');
+}
+
+function buildNav(){
+  const p=currentUser.perm;
+  const nav=document.getElementById('sidebar-nav');
+  nav.innerHTML='';
+  const items=[];
+  if(p==='advocaat') items.push({id:'overview',label:'Overzicht',icon:'<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round"/>'});
+  if(p==='partner'||p==='mentor'||p==='sysadmin') items.push({id:'employees',label:'Werknemers',icon:'<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"/>'});
+  if(p==='partner'||p==='sysadmin') items.push({id:'add-employee',label:'Werknemer Toevoegen',icon:'<path d="M12 4.5v15m7.5-7.5h-15" stroke-linecap="round" stroke-linejoin="round"/>'});
+  if(p==='sysadmin') items.push({id:'accounts',label:'Accounts',icon:'<path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" stroke-linecap="round" stroke-linejoin="round"/>'});
+  const sep=document.createElement('div');sep.className='nav-section-title';sep.textContent='Navigatie';nav.appendChild(sep);
+  items.forEach(item=>{
+    const d=document.createElement('div');
+    d.className='nav-item';d.id='nav-'+item.id;
+    d.innerHTML=`<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">${item.icon}</svg>${item.label}`;
+    d.onclick=()=>showSection(item.id);
+    nav.appendChild(d);
+  });
+}
+
+// ===== NAVIGATION =====
+function showSection(name){
+  if(!['add-account','employee-detail'].includes(name)) prevSection=name;
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const sec=document.getElementById('section-'+name);
+  if(sec) sec.classList.add('active');
+  const nav=document.getElementById('nav-'+name);
+  if(nav) nav.classList.add('active');
+  if(name==='employees') renderEmployeeList('');
+  if(name==='overview') renderOverview();
+  if(name==='accounts') renderAccountsTable();
+  if(name==='add-employee'){
+    document.getElementById('add-success').style.display='none';
+    ['f-fivem','f-discord-name','f-discord-id'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-rank').value='';
+  }
+  if(name==='add-account'){
+    document.getElementById('acc-success').style.display='none';
+    document.getElementById('acc-error').classList.remove('visible');
+    ['a-display','a-username','a-password'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('a-perm').value='';
+  }
+}
+
+function goBack(){showSection(prevSection==='employee-detail'?'employees':prevSection);}
+
+// ===== OVERVIEW =====
+function renderOverview(){
+  const total=employees.length;
+  const partners=employees.filter(e=>e.rank.includes('Partner')).length;
+  const advs=employees.filter(e=>e.rank.includes('Advocaat')&&e.rank!==STAGIAIR_RANK).length;
+  const stag=employees.filter(e=>e.rank===STAGIAIR_RANK).length;
+  document.getElementById('overview-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Totaal</div></div>
+    <div class="stat-card"><div class="stat-num">${partners}</div><div class="stat-label">Partners</div></div>
+    <div class="stat-card"><div class="stat-num">${advs}</div><div class="stat-label">Advocaten</div></div>
+    <div class="stat-card"><div class="stat-num">${stag}</div><div class="stat-label">Stagiairs</div></div>`;
+}
+
+// ===== EMPLOYEES =====
+function getInitials(n){return n.split(' ').map(x=>x[0]).join('').substring(0,2).toUpperCase();}
+
+function renderEmployeeList(query=''){
+  employees=loadEmployees();
+  const p=currentUser.perm;
+  const q=query.toLowerCase();
+  let visible=employees;
+  if(p==='mentor') visible=employees.filter(e=>e.rank===STAGIAIR_RANK);
+  if(q) visible=visible.filter(e=>e.fivemName.toLowerCase().includes(q)||e.discordName.toLowerCase().includes(q)||e.discordId.includes(q));
+
+  const sg=document.getElementById('stats-grid');
+  const total=employees.length,partners=employees.filter(e=>e.rank.includes('Partner')).length;
+  const advs=employees.filter(e=>e.rank.includes('Advocaat')&&e.rank!==STAGIAIR_RANK).length;
+  const stag=employees.filter(e=>e.rank===STAGIAIR_RANK).length;
+  sg.innerHTML=`
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Totaal Werknemers</div></div>
+    <div class="stat-card"><div class="stat-num">${partners}</div><div class="stat-label">Partners</div></div>
+    <div class="stat-card"><div class="stat-num">${advs}</div><div class="stat-label">Advocaten</div></div>
+    <div class="stat-card"><div class="stat-num">${stag}</div><div class="stat-label">Stagiairs</div></div>`;
+
+  const addWrap=document.getElementById('add-emp-btn-wrap');
+  if(addWrap) addWrap.innerHTML=(p==='partner'||p==='sysadmin')?'<button class="btn btn-sm" onclick="showSection(\'add-employee\')" style="margin-top:6px">+ Toevoegen</button>':'';
+
+  const ranksToShow=p==='mentor'?[STAGIAIR_RANK]:RANKS;
+  const list=document.getElementById('employees-list');list.innerHTML='';
+  ranksToShow.forEach(rank=>{
+    const re=visible.filter(e=>e.rank===rank);
+    const div=document.createElement('div');div.className='rank-section';
+    div.innerHTML=`<div class="rank-header"><div class="rank-badge-label">Rang</div><div class="rank-name">${rank}</div><div class="rank-count">${re.length} medewerker${re.length!==1?'s':''}</div></div><div class="employees-grid" id="grid-${rank.replace(/\s+/g,'_')}">${re.length===0?'<div class="empty-rank">Geen medewerkers in deze rang</div>':''}</div>`;
+    list.appendChild(div);
+    const grid=document.getElementById('grid-'+rank.replace(/\s+/g,'_'));
+    re.forEach(emp=>{
+      const card=document.createElement('div');card.className='employee-card';
+      card.innerHTML=`<div class="emp-initials">${getInitials(emp.fivemName)}</div><div class="emp-fivem">${emp.fivemName}</div><div class="emp-discord">@${emp.discordName}</div><div class="emp-meta"><span>ID: ${emp.discordId}</span><span class="comment-pill">${emp.comments.length} opmerkingen</span></div>`;
+      card.onclick=()=>openEmployee(emp.id);grid.appendChild(card);
+    });
+  });
+}
+
+function addEmployee(){
+  const fivem=document.getElementById('f-fivem').value.trim();
+  const dn=document.getElementById('f-discord-name').value.trim();
+  const di=document.getElementById('f-discord-id').value.trim();
+  const rank=document.getElementById('f-rank').value;
+  if(!fivem||!dn||!di||!rank){alert('Vul alle velden in.');return;}
+  employees=loadEmployees();
+  employees.unshift({id:Date.now().toString(),fivemName:fivem,discordName:dn,discordId:di,rank,createdAt:new Date().toISOString(),createdBy:currentUser.displayName,comments:[]});
+  saveEmployees(employees);
+  document.getElementById('add-success').style.display='block';
+  ['f-fivem','f-discord-name','f-discord-id'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-rank').value='';
+}
+
+// ===== EMPLOYEE DETAIL =====
+function openEmployee(id){
+  employees=loadEmployees();
+  const emp=employees.find(e=>e.id===id);
+  if(!emp) return;
+  const p=currentUser.perm;
+  const canComment=(p==='sysadmin')||(p==='partner')||(p==='mentor'&&emp.rank===STAGIAIR_RANK);
+  const addedDate=new Date(emp.createdAt).toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('employee-detail-content').innerHTML=`
+    <div class="detail-hero">
+      <div class="detail-avatar">${getInitials(emp.fivemName)}</div>
+      <div>
+        <div class="detail-name">${emp.fivemName}</div>
+        <div class="detail-rank-pill">${emp.rank}</div>
+        <div class="detail-discord">@${emp.discordName} &nbsp;·&nbsp; ID: ${emp.discordId}</div>
+      </div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-block">
+        <div class="block-title">Personeelsgegevens</div>
+        <div class="info-row"><span class="lbl">FiveM Naam</span><span class="val">${emp.fivemName}</span></div>
+        <div class="info-row"><span class="lbl">Discord</span><span class="val">${emp.discordName}</span></div>
+        <div class="info-row"><span class="lbl">Discord ID</span><span class="val">${emp.discordId}</span></div>
+        <div class="info-row"><span class="lbl">Rang</span><span class="val">${emp.rank}</span></div>
+        <div class="info-row"><span class="lbl">Toegevoegd op</span><span class="val">${addedDate}</span></div>
+        <div class="info-row"><span class="lbl">Toegevoegd door</span><span class="val">${emp.createdBy}</span></div>
+      </div>
+      <div class="detail-block">
+        <div class="block-title">Statistieken</div>
+        <div class="info-row"><span class="lbl">Opmerkingen</span><span class="val" id="cmt-stat">${emp.comments.length}</span></div>
+        <div class="info-row"><span class="lbl">Functie</span><span class="val">${emp.rank}</span></div>
+      </div>
+    </div>
+    <div class="comments-block">
+      <div class="block-title">Opmerkingen (<span id="cmt-count">${emp.comments.length}</span>)</div>
+      <div id="comments-list"></div>
+      ${canComment?`<div class="add-comment">
+        <div class="block-title" style="margin-bottom:10px">Opmerking Plaatsen</div>
+        <textarea id="new-comment" placeholder="Schrijf hier uw opmerking..."></textarea>
+        <div style="margin-top:10px"><button class="btn btn-sm" onclick="addComment('${emp.id}')">Plaatsen</button></div>
+      </div>`:'<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-family:Space Mono,monospace;font-size:.65rem;color:var(--muted);letter-spacing:.06em">U heeft geen toestemming om opmerkingen te plaatsen.</div>'}
+    </div>`;
+  renderComments(emp);
+  prevSection='employees';
+  showSection('employee-detail');
+}
+
+function renderComments(emp){
+  const list=document.getElementById('comments-list');if(!list)return;
+  if(emp.comments.length===0){list.innerHTML='<div style="font-family:Space Mono,monospace;font-size:.65rem;color:var(--muted);padding:8px 0;letter-spacing:.06em">Nog geen opmerkingen geplaatst.</div>';return;}
+  list.innerHTML=emp.comments.map(c=>{
+    const init=c.author.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+    const date=new Date(c.createdAt).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<div class="comment-item"><div class="comment-head"><div class="c-avatar">${init}</div><div class="c-author">${c.author}</div><div class="c-time">${date}</div></div><div class="c-text">${c.text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div></div>`;
+  }).join('');
+}
+
+function addComment(empId){
+  const text=document.getElementById('new-comment').value.trim();if(!text)return;
+  employees=loadEmployees();
+  const emp=employees.find(e=>e.id===empId);if(!emp)return;
+  emp.comments.push({id:Date.now().toString(),author:currentUser.displayName,text,createdAt:new Date().toISOString()});
+  saveEmployees(employees);
+  document.getElementById('new-comment').value='';
+  const cc=document.getElementById('cmt-count');if(cc)cc.textContent=emp.comments.length;
+  const cs=document.getElementById('cmt-stat');if(cs)cs.textContent=emp.comments.length;
+  renderComments(emp);
+}
+
+// ===== ACCOUNTS =====
+function renderAccountsTable(){
+  accounts=loadAccounts();
+  const t=document.getElementById('accounts-table');
+  t.innerHTML=`<thead><tr><th>Weergavenaam</th><th>Gebruikersnaam</th><th>Permissie</th><th>Wachtwoord</th><th></th></tr></thead>`;
+  const tbody=document.createElement('tbody');
+  accounts.forEach(acc=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td style="font-weight:500">${acc.displayName}</td>
+      <td><span style="font-family:Space Mono,monospace;font-size:.72rem;color:var(--muted)">${acc.username}</span></td>
+      <td><span class="perm-badge ${PERM_CLASSES[acc.perm]||''}">${PERM_LABELS[acc.perm]||acc.perm}</span></td>
+      <td><span style="font-family:Space Mono,monospace;font-size:.72rem;color:var(--muted)">••••••••</span></td>
+      <td style="text-align:right">
+        <select onchange="changePermission('${acc.id}',this.value)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-family:Space Mono,monospace;font-size:.62rem;outline:none;cursor:pointer;margin-right:8px">
+          <option value="">Permissie wijzigen...</option>
+          <option value="sysadmin">System Admin</option>
+          <option value="partner">Partner</option>
+          <option value="mentor">Mentor</option>
+          <option value="advocaat">Advocaat</option>
+        </select>
+        ${acc.id!==currentUser.id?`<button class="btn btn-xs btn-red" onclick="deleteAccount('${acc.id}')">Verwijder</button>`:'<span style="font-family:Space Mono,monospace;font-size:.58rem;color:var(--muted)">Huidig account</span>'}
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  t.appendChild(tbody);
+}
+
+function changePermission(id,perm){
+  if(!perm)return;
+  accounts=loadAccounts();
+  const acc=accounts.find(a=>a.id===id);
+  if(acc){acc.perm=perm;saveAccounts(accounts);renderAccountsTable();}
+}
+
+function deleteAccount(id){
+  if(!confirm('Weet u zeker dat u dit account wilt verwijderen?'))return;
+  accounts=loadAccounts();
+  accounts=accounts.filter(a=>a.id!==id);
+  saveAccounts(accounts);renderAccountsTable();
+}
+
+function addAccount(){
+  const display=document.getElementById('a-display').value.trim();
+  const username=document.getElementById('a-username').value.trim();
+  const password=document.getElementById('a-password').value;
+  const perm=document.getElementById('a-perm').value;
+  const errEl=document.getElementById('acc-error');
+  const sucEl=document.getElementById('acc-success');
+  if(!display||!username||!password||!perm){alert('Vul alle velden in.');return;}
+  accounts=loadAccounts();
+  if(accounts.find(a=>a.username===username)){errEl.classList.add('visible');sucEl.style.display='none';return;}
+  errEl.classList.remove('visible');
+  accounts.push({id:Date.now().toString(),username,password,displayName:display,perm});
+  saveAccounts(accounts);
+  sucEl.style.display='block';
+  ['a-display','a-username','a-password'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('a-perm').value='';
+}
+
+// ===== BOOT =====
+(function(){
+  const sess=sessionStorage.getItem('oa_user');
+  if(sess){
+    const u=JSON.parse(sess);
+    accounts=loadAccounts();
+    const fresh=accounts.find(a=>a.id===u.id);
+    if(fresh){currentUser=fresh;showDashboard();}
+  }
+})();
+</script>
+</body>
+</html>
